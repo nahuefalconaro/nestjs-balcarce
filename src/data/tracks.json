@@ -1,0 +1,95 @@
+{
+    "users": [],
+    "tracks": [
+        {
+            "id": 1,
+            "nombre": "Imagine",
+            "duracion": "3:04",
+            "artista": "John Lennon",
+            "album": "Imagine",
+            "anio": 1971,
+            "genero": "Rock"
+        },
+        {
+            "id": 2,
+            "nombre": "Bohemian Rhapsody",
+            "duracion": "5:55",
+            "artista": "Queen",
+            "album": "A Night at the Opera",
+            "anio": 1975,
+            "genero": "Rock"
+        },
+        {
+            "id": 3,
+            "nombre": "Shape of You",
+            "duracion": "3:53",
+            "artista": "Ed Sheeran",
+            "album": "Divide",
+            "anio": 2017,
+            "genero": "Pop"
+        },
+        {
+            "id": 4,
+            "nombre": "Billie Jean",
+            "duracion": "4:54",
+            "artista": "Michael Jackson",
+            "album": "Thriller",
+            "anio": 1982,
+            "genero": "Pop"
+        },
+        {
+            "id": 5,
+            "nombre": "Smells Like Teen Spirit",
+            "duracion": "5:01",
+            "artista": "Nirvana",
+            "album": "Nevermind",
+            "anio": 1991,
+            "genero": "Grunge"
+        },
+        {
+            "id": 6,
+            "nombre": "Hey Jude",
+            "duracion": "7:11",
+            "artista": "The Beatles",
+            "album": "Hey Jude",
+            "anio": 1968,
+            "genero": "Rock"
+        },
+        {
+            "id": 7,
+            "nombre": "Rolling in the Deep",
+            "duracion": "3:48",
+            "artista": "Adele",
+            "album": "21",
+            "anio": 2010,
+            "genero": "Pop"
+        },
+        {
+            "id": 8,
+            "nombre": "Hotel California",
+            "duracion": "6:30",
+            "artista": "Eagles",
+            "album": "Hotel California",
+            "anio": 1976,
+            "genero": "Rock"
+        },
+        {
+            "id": 9,
+            "nombre": "Lose Yourself",
+            "duracion": "5:26",
+            "artista": "Eminem",
+            "album": "8 Mile",
+            "anio": 2002,
+            "genero": "Hip Hop"
+        },
+        {
+            "id": 10,
+            "nombre": "Hips Don't Lie",
+            "duracion": "3:38",
+            "artista": "Shakira",
+            "album": "Oral Fixation Vol. 2",
+            "anio": 2005,
+            "genero": "Pop"
+        }
+    ]
+}
