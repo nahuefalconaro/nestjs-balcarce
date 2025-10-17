@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Post, Query, Req } from '@nestjs/common'
+import { Controller, Get, Param, Post, Body, Delete, Put, Patch } from '@nestjs/common'
 import { TrackService } from './track.service'
-import { Track } from './track.interface'
+import { type Track } from './track.interface'
+import { randomUUID } from 'crypto'
 
 @Controller('tracks')
 export class TrackController {
@@ -12,24 +13,29 @@ export class TrackController {
         return this.trackService.getTracks()
     }
 
-    @Post('body')
-    findAll(@Req() request: Request): string {
-        return request.body!.toString()
-    }
 
-    @Get('headers')
-    findAllHeaders(@Req() request: Request): string {
-        return JSON.stringify(request.headers)
-    }
-
-    @Get('query')
-    findAllQuery(@Query() query: any): string {
-        return JSON.stringify(query)
-    }
-
-    //Esto no debería retornar un string "no encontrado" sino una respuesta estándar. Pero es mejor que no retornar nada cuando el recurso no se encuentra. Lo trabajaremos a continuación...
     @Get(':id')
-    findOne(@Param('id') id: string): Promise<Track | string> {
-        return this.trackService.getById(Number(id))
+    getById(@Param('id') id: string): Promise<Track | Object> {
+        return this.trackService.getById(id)
+    }
+
+    @Post()
+    createOne(@Body() track: Track): Promise<any> {
+        return this.trackService.createOne(track)
+    }
+    @Delete(':id')
+    deleteOne(@Param('id') id: string): Promise<any> {
+        return this.trackService.deleteOne(id)
+    }
+
+    // @Put(':id')
+    // updateOne(@Param('id') id: string, @Body() body: Track): Promise<any> {
+    //     return this.trackService.updateOne(id, body)
+    // }
+
+    @Patch(':id')
+    updateOne(@Param('id') id: string, @Body() body: Track): Promise<any> {
+        return this.trackService.updateOne(id, body)
     }
 }
+

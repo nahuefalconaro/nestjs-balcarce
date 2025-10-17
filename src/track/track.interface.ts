@@ -1,9 +1,9 @@
 export interface Track {
     id: number
-    nombre: string
-    duracion: string
-    artista: string
+    title: string
+    duration: string
+    artist: string
     album: string
-    anio: number
-    genero: string
+    year: number
+    genre: string
 }
