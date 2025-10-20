@@ -1,13 +1,58 @@
-import { Injectable } from '@nestjs/common'
+import { HttpStatus, Injectable, NotFoundException, Res } from '@nestjs/common'
 import { Track } from './track.interface'
+import { MyExceptionCustom } from 'src/exceptions/MyExceptionCustom.exception';
 const BASE_URL = 'http://localhost:3001/tracks'
+
+interface ResponseDTO {
+    code: number;
+    message: string;
+    data?: any;
+}
+
 @Injectable()
 export class TrackService {
-    async getTracks(): Promise<Track[]> {
-        const res = await fetch(BASE_URL)
-        const tracks = await res.json()
-        return tracks
+
+
+    async getTracks(): Promise<ResponseDTO> {
+        try {
+            const res = await fetch(BASE_URL)
+            // const tracks = await res.json()
+            const tracks: any = [];
+            if (tracks.length === 0) throw new MyExceptionCustom('Tracks list is empty', HttpStatus.NOT_FOUND);
+            return {
+                code: HttpStatus.OK,
+                message: 'Tracks retrieved successfully',
+                data: tracks
+            }
+        }
+        catch (error) {
+            console.error("entro al catch", error);
+            return {
+                code: error.status,
+                message: 'Tracks retrieved successfully',
+                data: error
+            }
+        }
+
     }
+    // async getTracks(): Promise<ResponseDTO> {
+    //     const res = await fetch(BASE_URL)
+    //     // const tracks = await res.json()
+    //     const tracks:any = [];
+    //     if (tracks.length === 0) {
+    //         return {
+    //             code: HttpStatus.NOT_FOUND,
+    //             message: 'Tracks list is empty',
+    //             data: []
+    //         }
+    //     } else {
+    //         return {
+    //             code: HttpStatus.OK,
+    //             message: 'Tracks retrieved successfully',
+    //             data: tracks
+    //         }
+    //     }
+    // }
 
 
     async getById(id: string): Promise<Track | Object> {
