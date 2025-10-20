@@ -1,7 +1,13 @@
-import { Controller, Get, Param, Post, Body, Delete, Put, Patch } from '@nestjs/common'
+import { Controller, Get, Param, Post, Body, Delete, Put, Patch, HttpCode, Res, HttpStatus } from '@nestjs/common'
 import { TrackService } from './track.service'
 import { type Track } from './track.interface'
-import { randomUUID } from 'crypto'
+import { type Response } from 'express';
+
+interface ResponseDTO {
+    code: number;
+    message: string;
+    data?: any;
+}
 
 @Controller('tracks')
 export class TrackController {
@@ -9,8 +15,9 @@ export class TrackController {
     constructor(private readonly trackService: TrackService) { }
 
     @Get()
-    getTracks(): Promise<Track[]> {
-        return this.trackService.getTracks()
+    async getTracks(@Res() res: Response): Promise<any> {
+        const response: ResponseDTO = await this.trackService.getTracks();
+        res.status(response.code).json(response.data);
     }
 
 
