@@ -1,12 +1,13 @@
 import { Controller, Get, Param, Post, Body, Delete, Put, Patch, HttpCode, Res, HttpStatus } from '@nestjs/common'
 import { TrackService } from './track.service'
 import { type Track } from './track.interface'
-import { type Response } from 'express';
+import { type Response } from 'express'
+import { TrackDTO } from './track.dto'
 
 interface ResponseDTO {
-    code: number;
-    message: string;
-    data?: any;
+    code: number
+    message: string
+    data?: any
 }
 
 @Controller('tracks')
@@ -16,19 +17,20 @@ export class TrackController {
 
     @Get()
     async getTracks(@Res() res: Response): Promise<any> {
-        const response: ResponseDTO = await this.trackService.getTracks();
-        res.status(response.code).json(response.data);
+        const response: ResponseDTO = await this.trackService.getTracks()
+        res.status(response.code).json(response.data)
     }
 
 
     @Get(':id')
-    getById(@Param('id') id: string): Promise<Track | Object> {
-        return this.trackService.getById(id)
+    async getById(@Res() res: Response, @Param('id') id: string): Promise<any> {
+        const response: ResponseDTO = await this.trackService.getById(id)
+        res.status(response.code).json(response.data)
     }
 
     @Post()
-    createOne(@Body() track: Track): Promise<any> {
-        return this.trackService.createOne(track)
+    createOne(@Body() trackDTO: TrackDTO): Promise<any> {
+        return this.trackService.createOne(trackDTO)
     }
     @Delete(':id')
     deleteOne(@Param('id') id: string): Promise<any> {

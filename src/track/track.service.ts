@@ -1,12 +1,13 @@
 import { HttpStatus, Injectable, NotFoundException, Res } from '@nestjs/common'
 import { Track } from './track.interface'
-import { MyExceptionCustom } from 'src/exceptions/MyExceptionCustom.exception';
+import { MyExceptionCustom } from 'src/exceptions/MyExceptionCustom.exception'
+import { TrackDTO } from './track.dto'
 const BASE_URL = 'http://localhost:3001/tracks'
 
 interface ResponseDTO {
-    code: number;
-    message: string;
-    data?: any;
+    code: number
+    message: string
+    data?: Track | Track[]
 }
 
 @Injectable()
@@ -16,9 +17,9 @@ export class TrackService {
     async getTracks(): Promise<ResponseDTO> {
         try {
             const res = await fetch(BASE_URL)
-            // const tracks = await res.json()
-            const tracks: any = [];
-            if (tracks.length === 0) throw new MyExceptionCustom('Tracks list is empty', HttpStatus.NOT_FOUND);
+            const tracks = await res.json()
+            // const tracks: any = []
+            if (tracks.length === 0) throw new MyExceptionCustom('Tracks list is empty', HttpStatus.NOT_FOUND)
             return {
                 code: HttpStatus.OK,
                 message: 'Tracks retrieved successfully',
@@ -26,10 +27,10 @@ export class TrackService {
             }
         }
         catch (error) {
-            console.error("entro al catch", error);
+            console.log(error)
             return {
                 code: error.status,
-                message: 'Tracks retrieved successfully',
+                message: 'Data Not Found',
                 data: error
             }
         }
@@ -55,18 +56,34 @@ export class TrackService {
     // }
 
 
-    async getById(id: string): Promise<Track | Object> {
-        const res = await fetch(`${BASE_URL}/${id}`)
-        if (!res.ok) {
-            return {}
-        } else {
-            const track = await res.json()
-            return track
+    async getById(id: string): Promise<ResponseDTO> {
+        try {
+            const res = await fetch(`${BASE_URL}/${id}`)
+            if (!res.ok) {
+                throw new MyExceptionCustom('Track not found', HttpStatus.NOT_FOUND)
+            } else {
+                const track = await res.json()
+                return {
+                    code: HttpStatus.OK,
+                    message: 'Track retrieved successfully',
+                    data: track
+                }
+            }
+        }
+        catch (error) {
+            console.log("En el catch")
+            console.log(error)
+            return {
+
+                code: error.status,
+                message: `Track wiht ID: ${id} Not Found`,
+                data: error
+            }
         }
 
     }
 
-    async createOne(track: Track): Promise<any> {
+    async createOne(track: TrackDTO): Promise<any> {
         const res = await fetch(BASE_URL, {
             method: 'POST',
             headers: {
