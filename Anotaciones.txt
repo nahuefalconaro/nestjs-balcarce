@@ -1,0 +1,5 @@
+Typeorm: npm install --save @nestjs/typeorm typeorm mysql2
+
+Links utiles: 
+                nestjs database: https://docs.nestjs.com/techniques/database 
+                typeorm:         https://typeorm.io/docs/entity/entities/

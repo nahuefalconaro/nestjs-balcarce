@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Post, Body, Delete, Put, Patch, HttpCode, Res, HttpStatus } from '@nestjs/common'
 import { TrackService } from './track.service'
-import { type Track } from './track.interface'
+import { Track } from './track.entity'
 import { type Response } from 'express'
 import { TrackDTO } from './track.dto'
 
@@ -17,7 +17,7 @@ export class TrackController {
 
     @Get()
     async getTracks(@Res() res: Response): Promise<any> {
-        const response: ResponseDTO = await this.trackService.getTracks()
+        const response: ResponseDTO = await this.trackService.getTracksDB()
         res.status(response.code).json(response.data)
     }
 

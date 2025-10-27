@@ -1,7 +1,9 @@
 import { HttpStatus, Injectable, NotFoundException, Res } from '@nestjs/common'
-import { Track } from './track.interface'
 import { MyExceptionCustom } from 'src/exceptions/MyExceptionCustom.exception'
 import { TrackDTO } from './track.dto'
+import { Track } from './track.entity'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
 const BASE_URL = 'http://localhost:3001/tracks'
 
 interface ResponseDTO {
@@ -14,12 +16,12 @@ interface ResponseDTO {
 export class TrackService {
 
 
-    async getTracks(): Promise<ResponseDTO> {
+    constructor(@InjectRepository(Track) private readonly trackRepository: Repository<Track>) { }
+
+    async getTracksDB(): Promise<ResponseDTO> {
         try {
-            const res = await fetch(BASE_URL)
-            const tracks = await res.json()
-            // const tracks: any = []
-            if (tracks.length === 0) throw new MyExceptionCustom('Tracks list is empty', HttpStatus.NOT_FOUND)
+            const tracks = await this.trackRepository.find();
+            console.table(tracks)
             return {
                 code: HttpStatus.OK,
                 message: 'Tracks retrieved successfully',
@@ -58,15 +60,14 @@ export class TrackService {
 
     async getById(id: string): Promise<ResponseDTO> {
         try {
-            const res = await fetch(`${BASE_URL}/${id}`)
-            if (!res.ok) {
+            const res = await this.trackRepository.findOneBy({id: Number(id)});
+            if (!res) {
                 throw new MyExceptionCustom('Track not found', HttpStatus.NOT_FOUND)
             } else {
-                const track = await res.json()
                 return {
                     code: HttpStatus.OK,
                     message: 'Track retrieved successfully',
-                    data: track
+                    data: res
                 }
             }
         }
