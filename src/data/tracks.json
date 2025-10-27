@@ -99,6 +99,45 @@
       "album": "Sale el Sol",
       "year": 2010,
       "genre": "Pop"
+    },
+    {
+      "id": "09d4",
+      "name": "Tomate",
+      "type": "Citric"
+    },
+    {
+      "id": "aca2",
+      "name": "Pluto",
+      "type": "Dwarf Planet"
+    },
+    {
+      "id": "9ee0",
+      "title": "Dynamite",
+      "duration": "3:19",
+      "artist": "BTS",
+      "album": "Dynamite (Single)",
+      "year": 2020,
+      "genre": "K-Pop",
+      "campo extra": "Que pasa con esto cat?"
+    },
+    {
+      "id": "01ee",
+      "title": "Rolling in the Deep",
+      "duration": "3:48",
+      "artist": "Adele",
+      "album": "21",
+      "year": 2010,
+      "genre": "Soul"
+    },
+    {
+      "id": "093d",
+      "title": "Sunflower",
+      "duration": "2:38",
+      "artist": "Post Malone, Swae Lee",
+      "album": "Hollywood's Bleeding",
+      "year": 2018,
+      "genre": "Pop",
+      "peligro": "te enchufo código malicioso"
     }
   ]
 }
