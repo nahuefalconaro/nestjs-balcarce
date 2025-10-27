@@ -1,13 +1,21 @@
 import { Module } from '@nestjs/common'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
-import { TrackController } from './track/track.controller'
-import { TrackService } from './track/track.service'
-import { ArtistModule } from './artist/artist.module';
+import { TrackModule } from './track/track.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Track } from './track/track.entity';
 
 @Module({
-  imports: [ArtistModule],
-  controllers: [AppController, TrackController],
-  providers: [AppService, TrackService],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: "mysql",
+      host: "localhost",
+      port: 3306,
+      username: "root",
+      password: "cepit",
+      database: "musicadb",
+      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [Track],
+      synchronize: true
+    })
+    , TrackModule]
 })
 export class AppModule { }
