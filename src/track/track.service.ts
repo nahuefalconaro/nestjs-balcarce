@@ -1,144 +1,68 @@
-import { HttpStatus, Injectable, NotFoundException, Res } from '@nestjs/common'
-import { MyExceptionCustom } from 'src/exceptions/MyExceptionCustom.exception'
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
 import { TrackDTO } from './track.dto'
 import { Track } from './track.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-const BASE_URL = 'http://localhost:3001/tracks'
+import { ResponseDTO } from './track.response.dto'
 
-interface ResponseDTO {
-    code: number
-    message: string
-    data?: Track | Track[]
-}
+
+
 
 @Injectable()
 export class TrackService {
-
-
     constructor(@InjectRepository(Track) private readonly trackRepository: Repository<Track>) { }
 
-    async getTracksDB(): Promise<ResponseDTO> {
-        try {
-            const tracks = await this.trackRepository.find();
-            console.table(tracks)
-            return {
-                code: HttpStatus.OK,
-                message: 'Tracks retrieved successfully',
-                data: tracks
-            }
+    async getAll(): Promise<ResponseDTO> {
+        const tracks = await this.trackRepository.find()
+        if (!tracks.length) throw new NotFoundException("Tracks not found")
+        return {
+            code: HttpStatus.OK,
+            message: 'Tracks retrieved successfully',
+            data: tracks
         }
-        catch (error) {
-            console.log(error)
-            return {
-                code: error.status,
-                message: 'Data Not Found',
-                data: error
-            }
+    }
+
+    async getOneById(id: number): Promise<ResponseDTO> {
+        const track = await this.trackRepository.findOneBy({ id })
+        if (!track) throw new NotFoundException("Tracks not found")
+        return {
+            code: HttpStatus.OK,
+            message: 'Track retrieved successfully',
+            data: track
         }
-
     }
-    // async getTracks(): Promise<ResponseDTO> {
-    //     const res = await fetch(BASE_URL)
-    //     // const tracks = await res.json()
-    //     const tracks:any = [];
-    //     if (tracks.length === 0) {
-    //         return {
-    //             code: HttpStatus.NOT_FOUND,
-    //             message: 'Tracks list is empty',
-    //             data: []
-    //         }
-    //     } else {
-    //         return {
-    //             code: HttpStatus.OK,
-    //             message: 'Tracks retrieved successfully',
-    //             data: tracks
-    //         }
-    //     }
-    // }
 
+    //TODO Crear método para buscar por título, o autor, o ambos
 
-    async getById(id: string): Promise<ResponseDTO> {
-        try {
-            const res = await this.trackRepository.findOneBy({id: Number(id)});
-            if (!res) {
-                throw new MyExceptionCustom('Track not found', HttpStatus.NOT_FOUND)
-            } else {
-                return {
-                    code: HttpStatus.OK,
-                    message: 'Track retrieved successfully',
-                    data: res
-                }
-            }
+    async createOne(track: TrackDTO): Promise<ResponseDTO> {
+        const newTrack = this.trackRepository.create(track)
+        const res = await this.trackRepository.save(newTrack)
+
+        return {
+            code: HttpStatus.CREATED,
+            message: 'Track retrieved successfully',
+            data: res
         }
-        catch (error) {
-            console.log("En el catch")
-            console.log(error)
-            return {
+    }
 
-                code: error.status,
-                message: `Track wiht ID: ${id} Not Found`,
-                data: error
-            }
+    async deleteOne(id: number): Promise<ResponseDTO> {
+        const res = await this.trackRepository.delete({ id })
+        if (!res.affected) throw new NotFoundException(`No track with id ${id} were found`)
+        return {
+            code: HttpStatus.OK,
+            message: 'Track deleted successfully',
+
         }
-
     }
-
-    async createOne(track: TrackDTO): Promise<any> {
-        const res = await fetch(BASE_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application-json'
-            },
-            body: JSON.stringify(track)
-        })
-        const endResponse = res.json()
-        return endResponse
-    }
-
-    async deleteOne(id: string): Promise<any> {
-        const res = await fetch(`${BASE_URL}/${id}`, {
-            method: 'DELETE',
-
-        })
-        const endResponse = res.json()
-        return endResponse
-    }
-
-    //CON PUT
-    /* async updateOne(id: string, body: Track): Promise<any> {
-        const isTrack = await this.getById(id)
-        if (!Object.keys(isTrack).length) return
-
-        const updatedTrack = { ...body, id }
-        const res = await fetch(`${BASE_URL}/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application-json'
-            },
-            body: JSON.stringify(updatedTrack)
-
-        })
-        const endResponse = res.json()
-        return endResponse
-    }
-    */
 
     //CON PATCH
-    async updateOne(id: string, body: Track): Promise<any> {
-        const isTrack = await this.getById(id)
-        if (!Object.keys(isTrack).length) return
+    async updateOne(id: number, body: Partial<TrackDTO>): Promise<ResponseDTO> {
+        const res = await this.trackRepository.update(id, body)
+        if (!res.affected) throw new NotFoundException(`No track with id ${id} were found`)
+        return {
+            code: HttpStatus.NO_CONTENT,
+            message: 'Track updated successfully',
 
-        const updatedTrack = { ...body, id }
-        const res = await fetch(`${BASE_URL}/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application-json'
-            },
-            body: JSON.stringify(updatedTrack)
-
-        })
-        const endResponse = res.json()
-        return endResponse
+        }
     }
 }
