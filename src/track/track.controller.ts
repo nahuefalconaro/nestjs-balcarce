@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Post, Body, Delete, Put, Patch, HttpCode, Res, HttpStatus } from '@nestjs/common'
 import { TrackService } from './track.service'
 
-import { TrackDTO } from './track.dto'
-import { ResponseDTO } from './track.response.dto'
+import { TrackDTO } from './dto/track.dto'
+import { ResponseDTO } from './dto/response.dto'
 
 
 @Controller('tracks')

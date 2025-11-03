@@ -1,11 +1,9 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
-import { TrackDTO } from './track.dto'
-import { Track } from './track.entity'
+import { TrackDTO } from './dto/track.dto'
+import { Track } from './entities/track.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { ResponseDTO } from './track.response.dto'
-
-
+import { ResponseDTO } from './dto/response.dto'
 
 
 @Injectable()
@@ -21,6 +19,38 @@ export class TrackService {
             data: tracks
         }
     }
+
+    async getAllTracksWithArtist(): Promise<ResponseDTO> {
+        const tracks = await this.trackRepository.find({
+            relations: {
+                artist: true
+            }
+        })
+        if (!tracks.length) throw new NotFoundException("Tracks not found")
+        return {
+            code: HttpStatus.OK,
+            message: 'Tracks retrieved successfully',
+            data: tracks
+        }
+    }
+    
+    async getTracksByArtist(artistId: number): Promise<ResponseDTO> {
+        const tracks = await this.trackRepository.find({
+            where: {
+                artist: { id: artistId }
+            },
+            relations: {
+                artist: true
+            }
+        })
+        if (!tracks.length) throw new NotFoundException("Tracks not found for the given artist")
+        return {
+            code: HttpStatus.OK,
+            message: 'Tracks retrieved successfully',
+            data: tracks
+        }
+    }
+
 
     async getOneById(id: number): Promise<ResponseDTO> {
         const track = await this.trackRepository.findOneBy({ id })
