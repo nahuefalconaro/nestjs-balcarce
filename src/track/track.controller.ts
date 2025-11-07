@@ -15,25 +15,25 @@ export class TrackController {
         return this.trackService.getAll()
     }
 
-    @Get(':id')
-    getOneById(@Param('id') id: number): Promise<ResponseDTO> {
-        return this.trackService.getOneById(id)
-    }
+    // @Get(':id')
+    // getOneById(@Param('id') id: number): Promise<ResponseDTO> {
+    //     return this.trackService.getOneById(id)
+    // }
 
-    @Post()
-    createOne(@Body() trackDTO: TrackDTO): Promise<ResponseDTO> {
-        return this.trackService.createOne(trackDTO)
-    }
-    @Delete(':id')
-    deleteOne(@Param('id') id: number): Promise<ResponseDTO> {
-        return this.trackService.deleteOne(id)
-    }
+    // @Post()
+    // createOne(@Body() trackDTO: TrackDTO): Promise<ResponseDTO> {
+    //     return this.trackService.createOne(trackDTO)
+    // }
+    // @Delete(':id')
+    // deleteOne(@Param('id') id: number): Promise<ResponseDTO> {
+    //     return this.trackService.deleteOne(id)
+    // }
 
 
 
-    @Patch(':id')
-    updateOne(@Param('id') id: number, @Body() body: Partial<TrackDTO>): Promise<ResponseDTO> {
-        return this.trackService.updateOne(id, body)
-    }
+    // @Patch(':id')
+    // updateOne(@Param('id') id: number, @Body() body: Partial<TrackDTO>): Promise<ResponseDTO> {
+    //     return this.trackService.updateOne(id, body)
+    // }
 }
 

@@ -3,3 +3,4 @@ Typeorm: npm install --save @nestjs/typeorm typeorm mysql2
 Links utiles: 
                 nestjs database: https://docs.nestjs.com/techniques/database 
                 typeorm:         https://typeorm.io/docs/entity/entities/
+                UUID's en SQL: //https://dev.mysql.com/blog-archive/mysql-8-0-uuid-support/
