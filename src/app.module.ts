@@ -4,6 +4,7 @@ import { TrackModule } from './track/track.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ArtistModule } from './artist/artist.module';
 import { AlbumModule } from './album/album.module';
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -17,6 +18,6 @@ import { AlbumModule } from './album/album.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true //OJITO, está bien en dev, pero no no en prod.
     })
-    , TrackModule, ArtistModule, AlbumModule]
+    , TrackModule, ArtistModule, AlbumModule, UserModule]
 })
 export class AppModule { }
