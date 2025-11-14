@@ -28,7 +28,7 @@ export class TrackDTO {
     albumId?: string
 
     @IsArray()
-    // @IsUUID('4')
+    @IsUUID('4', { each: true })
     @ArrayMinSize(1, { message: 'At least one artist is required' })
     artistIds: string[]
 
