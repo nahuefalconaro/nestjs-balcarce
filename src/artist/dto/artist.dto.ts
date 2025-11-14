@@ -23,9 +23,6 @@ export class ArtistDto {
     @IsOptional()
     @MaxLength(50)
     genre?: string
-
-    @IsString()
-    pais: string
 }
 
 export class UpdateArtistDto extends PartialType(ArtistDto) { }

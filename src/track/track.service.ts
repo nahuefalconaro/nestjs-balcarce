@@ -1,26 +1,104 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, ConflictException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { TrackDTO } from './dto/track.dto'
 import { Track } from './entities/track.entity'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { ResponseDTO } from './dto/response.dto'
+import { In, Repository } from 'typeorm'
+// import { ResponseDTO } from './dto/response.dto'
+import { Artist } from 'src/artist/entities/artist.entity'
+import { Album } from 'src/album/entities/album.entity'
 
 
 @Injectable()
 export class TrackService {
-    constructor(@InjectRepository(Track) private readonly trackRepository: Repository<Track>) { }
+    constructor(
+        @InjectRepository(Track)
+        private readonly trackRepository: Repository<Track>,
+        @InjectRepository(Album)
+        private readonly albumRepository: Repository<Album>,
+        @InjectRepository(Artist)
+        private readonly artistRepository: Repository<Artist>,
+    ) { }
+    async createOne(createTrack: TrackDTO): Promise<Track> {
+        try {
+            //1. Validar que hay un artista, al menos
+            if (!createTrack.artistIds || createTrack.artistIds.length === 0) {
+                throw new BadRequestException("At least one artist is required")
+            }
+            //2. Buscar y validar artista o artistas que entraron en el body
+            const artists = await this.artistRepository.find({
+                where: { artist_id: In(createTrack.artistIds) }
+            })
 
-    async getAll(): Promise<ResponseDTO> {
-        const tracks = await this.trackRepository.find()
-        if (!tracks.length) throw new NotFoundException("Tracks not found")
-        return {
-            code: HttpStatus.OK,
-            message: 'Tracks retrieved successfully',
-            data: tracks
+            if (!artists.length) {
+                //TODO: Verificar si es necesario ampliar la restricción
+                throw new NotFoundException(`Artists not found`)
+            }
+
+            //3. Buscar y validar si el album (si me pasaron alguno) existe
+            let album: Album | null = null
+            if (createTrack.albumId) {
+                album = await this.albumRepository.findOne({
+                    where: { album_id: createTrack.albumId }
+                })
+
+                if (!album) {
+                    throw new NotFoundException("Album Not Found")
+                }
+            }
+
+            //4. Validar que el trackNumber no se repita en el álbum
+            if (createTrack.trackNumber) {
+                const existingTrack = await this.trackRepository.findOne({
+                    where: {
+                        album: { album_id: createTrack.albumId },
+                        trackNumber: createTrack.trackNumber
+                    }
+                })
+                if (existingTrack) {
+                    throw new ConflictException("Track number already exists on that album")
+                }
+            }
+
+            //5. Crear el track
+            const { artistIds, albumId, ...trackData } = createTrack
+            const track = this.trackRepository.create({
+                ...trackData,
+                artists,
+                album: album as any
+            })
+
+            //6. Guardar en DB
+            const savedTrack = await this.trackRepository.save(track)
+
+            //7. Devolver el track con las relaciones cargadas
+            const foundTrack = await this.trackRepository.findOne({
+                where: { track_id: savedTrack.track_id },
+                relations: ['artists', 'album']
+            })
+            if (!foundTrack) throw new NotFoundException("Track not found")
+            return foundTrack
+
+        } catch (error) {
+            // relanzar errores personalizados
+            if (error instanceof NotFoundException ||
+                error instanceof BadRequestException ||
+                error instanceof ConflictException) {
+                throw error
+            }
+            throw new InternalServerErrorException("Failed to create track")
+
         }
     }
+    // async getAll(): Promise<ResponseDTO> {
+    //     const tracks = await this.trackRepository.find()
+    //     if (!tracks.length) throw new NotFoundException("Tracks not found")
+    //     return {
+    //         code: HttpStatus.OK,
+    //         message: 'Tracks retrieved successfully',
+    //         data: tracks
+    //     }
+    // }
     async getOneById() { }
-    async createOne() { }
     async deleteOne() { }
     async updateOne() { }
 
